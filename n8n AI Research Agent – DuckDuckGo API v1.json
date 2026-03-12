@@ -1,0 +1,158 @@
+{
+  "name": "n8n AI Research Agent – DuckDuckGo API v1",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -352,
+        -80
+      ],
+      "id": "0973df4b-2667-4ffd-94d0-30f93e7baccc",
+      "name": "When chat message received",
+      "webhookId": "b4ec2583-bc55-4c29-9ad0-8c9737dc2997"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a research assistant.\n\nWhen the user asks to research a topic, use the \"Fetch API Data\" tool.\nPass a short search query to the tool.\nAfter getting the result, summarize the key points in simple language.\nDo not ask follow-up questions before using the tool unless the request is ambiguous."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -144,
+        -80
+      ],
+      "id": "faa5d527-47aa-4ac4-9d76-cfbf75fefe4f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -288,
+        128
+      ],
+      "id": "3851174d-8fda-4c97-bb02-fb1bd03003e3",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Rs6oeW6kQb4Z1E5o",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -144,
+        128
+      ],
+      "id": "075bc8b3-b685-447b-928f-dc928d41cfc8",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search the web for information about a topic.\nUse this tool when the user asks to research something.\nPass a short search query like \"renewable energy\" or \"AI in finance\".",
+        "url": "=https://api.duckduckgo.com/",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            },
+            {
+              "name": "format",
+              "value": "json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        16,
+        128
+      ],
+      "id": "641fdce5-9283-4bd3-91ff-cc6f68b0a28a",
+      "name": "Fetch API Data"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch API Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "799bf150-11d5-4fd9-8414-08f8b16027a2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "57731ab3c366545b74a1581b811660098a7110512ba01ab349972ae3103eb5e1"
+  },
+  "id": "5fkP0MGM5ORJcVLn",
+  "tags": []
+}
